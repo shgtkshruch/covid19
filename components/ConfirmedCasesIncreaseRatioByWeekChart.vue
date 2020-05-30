@@ -202,7 +202,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   }),
   computed: {
     legends() {
-      return this.items.map((item, i) => {
+      return this.items.map((label, i) => {
         let style
         switch (i) {
           case 1:
@@ -225,7 +225,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
               borderColor: this.colors[i].strokeColor,
             }
         }
-        return { text: item, style }
+        return { label, style }
       })
     },
     displayTransitionRatio() {
