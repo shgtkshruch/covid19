@@ -1,16 +1,14 @@
 <template>
   <data-view :title="title" :title-id="titleId" :date="date">
-    <h4 :id="`${titleId}-graph`" class="visually-hidden">
-      {{ $t(`{title}のグラフ`, { title }) }}
-    </h4>
-    <bar
-      :ref="'barChart'"
-      :style="{ display: canvas ? 'block' : 'none' }"
-      :chart-id="chartId"
-      :chart-data="displayData"
-      :options="displayOption"
-      :height="240"
-    />
+    <aria-labelledby :title="title" :title-id="titleId">
+      <bar
+        :style="{ display: canvas ? 'block' : 'none' }"
+        :chart-id="chartId"
+        :chart-data="displayData"
+        :options="displayOption"
+        :height="240"
+      />
+    </aria-labelledby>
     <template v-slot:dataTable>
       <client-only>
         <data-view-table :headers="tableHeaders" :items="tableData" />
@@ -28,6 +26,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
+import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewTable, {
   TableHeader,
@@ -77,7 +76,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   created() {
     this.canvas = process.browser
   },
-  components: { DataView, DataViewTable },
+  components: { DataView, DataViewTable, AriaLabelledby },
   props: {
     title: {
       type: String,
@@ -224,17 +223,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
         })
         .reverse()
     },
-  },
-  mounted() {
-    const barChart = this.$refs.barChart as Vue
-    const barElement = barChart.$el
-    const canvas = barElement.querySelector('canvas')
-    const labelledbyId = `${this.titleId}-graph`
-
-    if (canvas) {
-      canvas.setAttribute('role', 'img')
-      canvas.setAttribute('aria-labelledby', labelledbyId)
-    }
   },
 }
 

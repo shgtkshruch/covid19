@@ -8,19 +8,21 @@
     <template v-slot:description>
       <slot name="description" />
     </template>
-    <h4 :id="`${titleId}-graph`" class="visually-hidden">
-      {{ $t(`{title}のグラフ`, { title }) }}
-    </h4>
-    <scrollable-chart v-show="canvas" :display-data="displayData">
+    <scrollable-chart
+      v-show="canvas"
+      :display-data="displayData"
+      :display-option="displayOption"
+    >
       <template v-slot:chart="{ chartWidth }">
-        <bar
-          :ref="'barChart'"
-          :chart-id="chartId"
-          :chart-data="displayData"
-          :options="displayOption"
-          :height="240"
-          :width="chartWidth"
-        />
+        <aria-labelledby :title="title" :title-id="titleId">
+          <bar
+            :chart-id="chartId"
+            :chart-data="displayData"
+            :options="displayOption"
+            :height="240"
+            :width="chartWidth"
+          />
+        </aria-labelledby>
       </template>
       <template v-slot:sticky-chart>
         <bar
@@ -62,6 +64,7 @@ import Vue from 'vue'
 import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
+import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewDataSetPanel from '@/components/DataViewDataSetPanel.vue'
 import DataViewTable, {
@@ -142,6 +145,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     DataViewDataSetPanel,
     ScrollableChart,
     OpenDataLink,
+    AriaLabelledby,
   },
   props: {
     title: {
@@ -449,17 +453,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
         .sort((a, b) => dayjs(a.text).unix() - dayjs(b.text).unix())
         .reverse()
     },
-  },
-  mounted() {
-    const barChart = this.$refs.barChart as Vue
-    const barElement = barChart.$el
-    const canvas = barElement.querySelector('canvas')
-    const labelledbyId = `${this.titleId}-graph`
-
-    if (canvas) {
-      canvas.setAttribute('role', 'img')
-      canvas.setAttribute('aria-labelledby', labelledbyId)
-    }
   },
 }
 

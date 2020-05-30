@@ -24,20 +24,18 @@
         </button>
       </li>
     </ul>
-    <h4 :id="`${titleId}-graph`" class="visually-hidden">
-      {{ $t(`{title}のグラフ`, { title }) }}
-    </h4>
     <scrollable-chart v-show="canvas" :display-data="displayData">
       <template v-slot:chart="{ chartWidth }">
-        <line-chart
-          :ref="'lineChart'"
-          :chart-id="chartId"
-          :chart-data="displayData"
-          :options="displayOption"
-          :display-legends="displayLegends"
-          :height="240"
-          :width="chartWidth"
-        />
+        <aria-labelledby :title="title" :title-id="titleId">
+          <line-chart
+            :chart-id="chartId"
+            :chart-data="displayData"
+            :options="displayOption"
+            :display-legends="displayLegends"
+            :height="240"
+            :width="chartWidth"
+          />
+        </aria-labelledby>
       </template>
       <template v-slot:sticky-chart>
         <line-chart
@@ -82,6 +80,7 @@ import Vue from 'vue'
 import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
+import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewBasicInfoPanel from '@/components/DataViewBasicInfoPanel.vue'
 import DataViewTable, {
@@ -154,6 +153,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     DataViewBasicInfoPanel,
     ScrollableChart,
     OpenDataLink,
+    AriaLabelledby,
   },
   props: {
     title: {
@@ -476,17 +476,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
       this.displayLegends[i] = !this.displayLegends[i]
       this.displayLegends = this.displayLegends.slice()
     },
-  },
-  mounted() {
-    const lineChart = this.$refs.lineChart as Vue
-    const lineElement = lineChart.$el
-    const canvas = lineElement.querySelector('canvas')
-    const labelledbyId = `${this.titleId}-graph`
-
-    if (canvas) {
-      canvas.setAttribute('role', 'img')
-      canvas.setAttribute('aria-labelledby', labelledbyId)
-    }
   },
 }
 
