@@ -45,7 +45,6 @@ import Vue from 'vue'
 import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
-import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
 import ScrollableBarChart from '@/components/chart/ScrollableBarChart.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewDataSetPanel from '@/components/DataViewDataSetPanel.vue'
@@ -119,7 +118,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     DataViewDataSetPanel,
     ScrollableBarChart,
     OpenDataLink,
-    AriaLabelledby,
   },
   props: {
     title: {
