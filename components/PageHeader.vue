@@ -1,39 +1,45 @@
 <template>
-  <div class="header mb-3">
+  <div class="header">
     <h2 class="pageTitle">
-      <v-icon size="40" class="mr-2">
+      <v-icon v-if="icon" size="4rem" class="mr-2">
         {{ icon }}
       </v-icon>
-      {{ title }}
+      <slot />
     </h2>
-    <div class="date">
-      <span>最終更新 </span><time>{{ date }}</time>
-    </div>
   </div>
 </template>
 
-<script>
-export default {
-  props: ['title', 'icon', 'date'],
-}
+<script lang="ts">
+import Vue from 'vue'
+
+export default Vue.extend({
+  props: {
+    icon: {
+      type: String
+    }
+  }
+})
 </script>
 
-<style>
+<style lang="scss" scoped>
 .header {
   display: flex;
   align-items: flex-end;
   flex-wrap: wrap;
 }
+
 .pageTitle {
+  @include font-size(30);
+
+  color: $gray-2;
   display: flex;
   align-items: center;
-  font-size: 1.875rem;
-  line-height: 1;
+  line-height: 1.35;
   font-weight: normal;
   margin: 0 0.5em 0 0;
-}
-.date {
-  font-size: 0.875rem;
-  color: #808080;
+
+  @include lessThan($small) {
+    @include font-size(20);
+  }
 }
 </style>

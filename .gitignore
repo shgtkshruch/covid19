@@ -90,3 +90,12 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# Netlify
+.netlify
+
+# OGP images
+ogp/*
+
+# Vagrant
+.vagrant

@@ -3,12 +3,17 @@ type DataType = {
   小計: number
 }
 
-type GraphDataType = {
+export type GraphDataType = {
   label: string
   transition: number
-  cummulative: number
+  cumulative: number
 }
 
+/**
+ * Format for *Chart component
+ *
+ * @param data - Raw data
+ */
 export default (data: DataType[]) => {
   const graphData: GraphDataType[] = []
   const today = new Date()
@@ -23,7 +28,7 @@ export default (data: DataType[]) => {
         graphData.push({
           label: `${date.getMonth() + 1}/${date.getDate()}`,
           transition: subTotal,
-          cummulative: patSum
+          cumulative: patSum
         })
       }
     })

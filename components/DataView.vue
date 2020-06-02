@@ -1,87 +1,275 @@
 <template>
-  <v-card class="DataView pa-1">
-    <v-toolbar flat>
-      <div class="DataView-TitleContainer">
-        <v-toolbar-title>
+  <v-card class="DataView">
+    <div class="DataView-Inner">
+      <div class="DataView-Header">
+        <h3
+          class="DataView-Title"
+          :class="!!$slots.infoPanel ? 'with-infoPanel' : ''"
+        >
           {{ title }}
-        </v-toolbar-title>
+        </h3>
+        <slot name="infoPanel" />
+      </div>
+
+      <div v-if="this.$slots.attentionNote" class="DataView-AttentionNote">
+        <slot name="attentionNote" />
+      </div>
+
+      <div class="DataView-Description">
+        <slot name="description" />
+      </div>
+
+      <div>
         <slot name="button" />
       </div>
-      <v-spacer />
-      <slot name="infoPanel" />
-    </v-toolbar>
-    <v-card-text class="DataView-CardText">
-      <slot />
-    </v-card-text>
-    <v-footer class="DataView-Footer"> {{ date }} 更新 </v-footer>
+
+      <div class="DataView-Content">
+        <slot />
+      </div>
+
+      <div class="DataView-Description DataView-Description--Additional">
+        <slot name="additionalDescription" />
+      </div>
+
+      <data-view-expantion-panel
+        v-if="this.$slots.dataTable"
+        class="DataView-ExpantionPanel"
+      >
+        <slot name="dataTable" />
+      </data-view-expantion-panel>
+
+      <div class="DataView-Space" />
+
+      <div class="DataView-Footer">
+        <div>
+          <slot name="footer" />
+          <div>
+            <a class="Permalink" :href="permalink">
+              <time :datetime="formattedDate">
+                {{ $t('{date} 更新', { date: formattedDateForDisplay }) }}
+              </time>
+            </a>
+          </div>
+        </div>
+
+        <data-view-share
+          v-if="this.$route.query.embed != 'true'"
+          :title="title"
+          :title-id="titleId"
+          class="Footer-Right"
+        />
+      </div>
+    </div>
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import Vue from 'vue'
+import { MetaInfo } from 'vue-meta'
+import { convertDatetimeToISO8601Format } from '@/utils/formatDate'
+import DataViewExpantionPanel from '@/components/DataViewExpantionPanel.vue'
+import DataViewShare from '@/components/DataViewShare.vue'
 
-@Component
-export default class DataView extends Vue {
-  @Prop() private title!: string
-  @Prop() private date!: string
-  @Prop() private info!: any // FIXME expect info as {lText:string, sText:string unit:string}
-}
+export default Vue.extend({
+  components: { DataViewExpantionPanel, DataViewShare },
+  props: {
+    title: {
+      type: String,
+      default: ''
+    },
+    titleId: {
+      type: String,
+      default: ''
+    },
+    date: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    formattedDate(): string {
+      return convertDatetimeToISO8601Format(this.date)
+    },
+    formattedDateForDisplay(): string {
+      return this.$d(new Date(this.date), 'dateTime')
+    },
+    permalink(): string {
+      const permalink = '/cards/' + this.titleId
+      return this.localePath(permalink)
+    }
+  },
+  head(): MetaInfo {
+    // カードの個別ページの場合は、タイトルと更新時刻を`page/cards/_card`に渡す
+    if (!this.$route.params.card) return {}
+
+    return {
+      title: this.title,
+      meta: [
+        {
+          hid: 'og:title',
+          property: 'og:title',
+          content: this.title
+        },
+        { hid: 'description', name: 'description', content: this.date },
+        {
+          hid: 'og:description',
+          property: 'og:description',
+          content: this.date
+        }
+      ]
+    }
+  }
+})
 </script>
 
 <style lang="scss">
 .DataView {
-  &-DataInfo {
-    &-summary {
-      font-family: Hiragino Sans;
-      font-style: normal;
-      font-size: 30px;
-      line-height: 30px;
-      text-align: right;
-      white-space: nowrap;
-      &-unit {
-        font-size: 0.6em;
-        width: 100%;
+  height: 100%;
+  @include card-container();
+
+  &-Header {
+    display: flex;
+    align-items: flex-start;
+    flex-flow: column;
+    padding: 0 10px;
+
+    @include largerThan($medium) {
+      padding: 0 5px;
+    }
+
+    @include largerThan($large) {
+      flex-flow: row;
+      padding: 0;
+    }
+  }
+
+  &-Inner {
+    display: flex;
+    flex-flow: column;
+    padding: 22px;
+    height: 100%;
+  }
+
+  &-Title {
+    width: 100%;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    font-weight: normal;
+    color: $gray-2;
+    @include font-size(20);
+
+    @include largerThan($large) {
+      margin-bottom: 0;
+
+      &.with-infoPanel {
+        width: 50%;
       }
     }
-    &-date {
-      font-size: 12px;
-      line-height: 12px;
-      color: #808080;
-      width: 100%;
-      display: inline-block;
+  }
+
+  &-Content {
+    margin: 16px 0;
+  }
+
+  &-Space {
+    margin-top: 10px;
+  }
+
+  &-Description {
+    margin-top: 10px;
+    color: $gray-3;
+    @include font-size(12);
+
+    &--Additional {
+      margin-bottom: 10px;
+    }
+
+    ul,
+    ol {
+      list-style-type: none;
+      padding: 0;
     }
   }
-}
-.DataView {
-  @include card-container();
-  height: 100%;
-  &-Header {
-    background-color: transparent !important;
-    height: auto !important;
+
+  &-Details {
+    margin: 10px 0;
+
+    .v-data-table {
+      .text-end {
+        text-align: right;
+      }
+      .text-nowrap {
+        white-space: nowrap;
+      }
+    }
   }
-  &-TitleContainer {
-    padding: 14px 0 8px;
+
+  &-ExpantionPanel {
+    margin-bottom: 10px;
   }
-  &-Title {
-    @include card-h2();
-  }
-  &-CardText {
-    margin-bottom: 46px;
-    margin-top: 20px;
-  }
+
   &-Footer {
-    background-color: $white !important;
-    text-align: right;
-    margin: 2px 4px 12px;
-    flex-direction: row-reverse;
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    color: $gray-3;
     @include font-size(12);
-    color: $gray-3 !important;
+
+    .Permalink {
+      color: $gray-3 !important;
+    }
+
+    .Footer-Right {
+      display: flex;
+      align-items: flex-end;
+    }
   }
-}
-.v-toolbar__content {
-  height: 80px !important;
-}
-.v-toolbar__title {
-  white-space: inherit !important;
+
+  &-Description,
+  &-Footer {
+    ul,
+    ol {
+      list-style-type: none;
+      padding: 0;
+    }
+  }
+
+  &-AttentionNote {
+    margin: 10px 0;
+    padding: 12px;
+    background-color: $emergency;
+    border-radius: 4px;
+    color: $gray-2;
+    @include font-size(12);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .LegendStickyChart {
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+
+    .scrollable {
+      overflow-x: scroll;
+
+      &::-webkit-scrollbar {
+        height: 4px;
+        background-color: rgba(0, 0, 0, 0.01);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.07);
+      }
+    }
+
+    .sticky-legend {
+      position: absolute;
+      top: 0;
+      pointer-events: none;
+    }
+  }
 }
 </style>

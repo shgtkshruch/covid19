@@ -1,75 +1,67 @@
 <template>
   <div class="DataView-DataInfo">
-    <span class="DataView-DataInfo-summary">
-      {{ lText
-      }}<small class="DataView-DataInfo-summary-unit">{{ unit }}</small>
+    <span v-if="lText !== ''" class="DataView-DataInfo-summary">
+      {{ lText }}
+      <small class="DataView-DataInfo-summary-unit">{{ unit }}</small>
     </span>
-    <br />
-    <small class="DataView-DataView-DataInfo-date">{{ sText }}</small>
+    <br v-if="lText !== ''" />
+    <small class="DataView-DataInfo-date">{{ sText }}</small>
   </div>
 </template>
 
 <style lang="scss">
 .DataView {
   &-DataInfo {
-    margin-top: 20px;
-    text-align: right;
+    @include largerThan($large) {
+      text-align: right;
+      width: 50%;
+    }
+
     &-summary {
       display: inline-block;
-      font-family: Hiragino Sans;
+      color: $gray-2;
+      white-space: nowrap;
+      font-family: Hiragino Sans, sans-serif;
       font-style: normal;
-      font-size: 30px;
       line-height: 30px;
+      @include font-size(30);
+
       &-unit {
-        font-size: 0.6em;
+        width: 100%;
+        @include font-size(18);
       }
     }
+
     &-date {
       display: inline-block;
-      font-size: 12px;
-      line-height: 12px;
-      color: #808080;
+      width: 100%;
+      color: $gray-3;
+      line-height: initial;
+      @include font-size(12);
     }
   }
-}
-.DataView {
-  @include card-container();
-  height: 100%;
-  &-Header {
-    background-color: transparent !important;
-    height: auto !important;
-  }
-  &-TitleContainer {
-    padding: 14px 0 8px;
-  }
-  &-Title {
-    @include card-h2();
-  }
-  &-CardText {
-    margin-bottom: 46px;
-    margin-top: 20px;
-  }
-  &-Footer {
-    background-color: $white !important;
-    text-align: right;
-    margin: 2px 4px 12px;
-    flex-direction: row-reverse;
-    @include font-size(12);
-    color: $gray-3 !important;
-  }
-}
-.v-toolbar__content {
-  height: 80px !important;
 }
 </style>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import Vue from 'vue'
 
-@Component
-export default class DataView extends Vue {
-  @Prop() private lText!: string
-  @Prop() private sText!: string
-  @Prop() private unit!: string
-}
+export default Vue.extend({
+  props: {
+    lText: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    sText: {
+      type: String,
+      required: true
+    },
+    unit: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  }
+})
 </script>
