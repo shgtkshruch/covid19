@@ -1,6 +1,6 @@
 <template>
   <ul :class="$style.GraphLegend">
-    <li v-for="(label, i) in labels" :key="i" @click="onClickLegend(i)">
+    <li v-for="(legend, i) in legends" :key="i" @click="onClickLegend(i)">
       <button>
         <div :style="legend.style" />
         <span
@@ -18,11 +18,10 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
-import { Legend } from '../ChartLegend.vue'
 
 export interface LegendLabel {
   style: {}
-  text: string
+  label: string
 }
 type Data = {}
 type Methods = {

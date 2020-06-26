@@ -5,37 +5,17 @@
     :date="date"
     :head-title="title + infoTitles.join(',')"
   >
-    <ul
-      :class="$style.GraphLegend"
-      :style="{ display: canvas ? 'block' : 'none' }"
+    <chart-legend
+      v-show="canvas"
+      :legends="legends"
+      :display-legends="displayLegends"
+      @click="onClickLegend"
+    />
+    <scrollable-chart
+      v-show="canvas"
+      :display-data="displayData"
+      :display-option="displayOption"
     >
-      <li v-for="(item, i) in dataLabels" :key="i" @click="onClickLegend(i)">
-        <button>
-          <div
-            v-if="i === 1"
-            :style="{
-              backgroundColor: colors[i].fillColor,
-              border: 0,
-              height: '3px',
-            }"
-          />
-          <div
-            v-else
-            :style="{
-              backgroundColor: colors[i].fillColor,
-              borderColor: colors[i].strokeColor,
-            }"
-          />
-          <span
-            :style="{
-              textDecoration: displayLegends[i] ? 'none' : 'line-through',
-            }"
-            >{{ item }}</span
-          >
-        </button>
-      </li>
-    </ul>
-    <scrollable-chart v-show="canvas" :display-data="displayData">
       <template v-slot:chart="{ chartWidth }">
         <aria-labelledby :title="title" :title-id="titleId">
           <bar
@@ -91,6 +71,7 @@ import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
 import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
+import ChartLegend, { LegendLabel } from '@/components/chart/Legend.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewDataSetPanel from '@/components/DataViewDataSetPanel.vue'
 import DataViewTable, {
@@ -131,6 +112,7 @@ type Computed = {
   scaledTicksYAxisMax: number
   tableHeaders: TableHeader[]
   tableData: TableItem[]
+  legends: LegendLabel[]
 }
 
 type Props = {
@@ -164,6 +146,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     ScrollableChart,
     OpenDataLink,
     AriaLabelledby,
+    ChartLegend,
   },
   props: {
     title: {
@@ -229,6 +212,27 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     }
   },
   computed: {
+    legends() {
+      const dataLabels = this.dataLabels as string[]
+      return dataLabels.map((label, i) => {
+        let style
+        switch (i) {
+          case 1:
+            style = {
+              backgroundColor: this.colors[i].fillColor,
+              border: 0,
+              height: '3px',
+            }
+            break
+          default:
+            style = {
+              backgroundColor: this.colors[i].fillColor,
+              borderColor: this.colors[i].strokeColor,
+            }
+        }
+        return { label, style }
+      })
+    },
     displayInfo() {
       const { lastDay, lastDayData, dayBeforeRatio } = calcDayBeforeRatio({
         displayData: this.displayData,
@@ -494,30 +498,3 @@ const options: ThisTypedComponentOptionsWithRecordProps<
 
 export default Vue.extend(options)
 </script>
-
-<style module lang="scss">
-.Graph {
-  &Legend {
-    text-align: center;
-    list-style: none;
-    padding: 0 !important;
-    li {
-      display: inline-block;
-      margin: 0 3px;
-      div {
-        height: 12px;
-        margin: 2px 4px;
-        width: 40px;
-        display: inline-block;
-        vertical-align: middle;
-        border-width: 1px;
-        border-style: solid;
-      }
-      button {
-        color: $gray-3;
-        @include font-size(12);
-      }
-    }
-  }
-}
-</style>

@@ -3,28 +3,17 @@
     <template v-slot:description>
       <slot name="description" />
     </template>
-    <ul
-      :class="$style.GraphLegend"
-      :style="{ display: canvas ? 'block' : 'none' }"
+    <chart-legend
+      v-show="canvas"
+      :legends="legends"
+      :display-legends="displayLegends"
+      @click="onClickLegend"
+    />
+    <scrollable-chart
+      v-show="canvas"
+      :display-data="displayData"
+      :display-option="displayOption"
     >
-      <li v-for="(item, i) in items" :key="i" @click="onClickLegend(i)">
-        <button>
-          <div
-            :style="{
-              backgroundColor: colors[i].fillColor,
-              borderColor: colors[i].strokeColor,
-            }"
-          />
-          <span
-            :style="{
-              textDecoration: displayLegends[i] ? 'none' : 'line-through',
-            }"
-            >{{ item }}</span
-          >
-        </button>
-      </li>
-    </ul>
-    <scrollable-chart v-show="canvas" :display-data="displayData">
       <template v-slot:chart="{ chartWidth }">
         <aria-labelledby :title="title" :title-id="titleId">
           <line-chart
@@ -81,6 +70,7 @@ import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
 import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
+import ChartLegends, { LegendLabel } from '@/components/chart/Legend.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewBasicInfoPanel from '@/components/DataViewBasicInfoPanel.vue'
 import DataViewTable, {
@@ -122,6 +112,7 @@ type Computed = {
   scaledTicksYAxisMax: number
   tableHeaders: TableHeader[]
   tableData: TableItem[]
+  legends: LegendLabel[]
 }
 type Props = {
   title: string
@@ -154,6 +145,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     ScrollableChart,
     OpenDataLink,
     AriaLabelledby,
+    ChartLegends,
   },
   props: {
     title: {
@@ -209,6 +201,33 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     canvas: true,
   }),
   computed: {
+    legends() {
+      return this.items.map((item, i) => {
+        let style
+        switch (i) {
+          case 1:
+            style = {
+              background: `repeating-linear-gradient(90deg, ${this.colors[1].fillColor}, ${this.colors[1].fillColor} 2px, #fff 2px, #fff 4px)`,
+              border: 0,
+              height: '2px',
+            }
+            break
+          case 2:
+            style = {
+              background: this.colors[1].fillColor,
+              border: 0,
+              height: '2px',
+            }
+            break
+          default:
+            style = {
+              backgroundColor: this.colors[i].fillColor,
+              borderColor: this.colors[i].strokeColor,
+            }
+        }
+        return { text: item, style }
+      })
+    },
     displayTransitionRatio() {
       const lastDay = this.chartData.slice(-1)[0].transition
       const lastDayBefore = this.chartData.slice(-2)[0].transition
@@ -481,30 +500,3 @@ const options: ThisTypedComponentOptionsWithRecordProps<
 
 export default Vue.extend(options)
 </script>
-
-<style module lang="scss">
-.Graph {
-  &Legend {
-    text-align: center;
-    list-style: none;
-    padding: 0 !important;
-    li {
-      display: inline-block;
-      margin: 0 3px;
-      div {
-        height: 12px;
-        margin: 2px 4px;
-        width: 40px;
-        display: inline-block;
-        vertical-align: middle;
-        border-width: 1px;
-        border-style: solid;
-      }
-      button {
-        color: $gray-3;
-        @include font-size(12);
-      }
-    }
-  }
-}
-</style>
