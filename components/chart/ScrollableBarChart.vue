@@ -20,7 +20,12 @@
         </aria-labelledby>
       </template>
       <template v-slot:sticky-chart>
-        <slot name="sticky-chart" />
+        <sticky-chart
+          :display-data="displayData"
+          :display-option="displayOption"
+          :display-legends="displayLegends"
+          :height="height"
+        />
       </template>
     </scrollable>
   </div>
@@ -33,6 +38,7 @@ import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
 import ChartLegend, { LegendLabel } from '@/components/chart/Legend.vue'
 import Scrollable from '@/components/chart/Scrollable.vue'
+import StickyChart from '@/components/chart/StickyChart.vue'
 import { DisplayData } from '@/plugins/vue-chart'
 
 type Data = {
@@ -59,7 +65,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   Computed,
   Props
 > = {
-  components: { AriaLabelledby, ChartLegend, Scrollable },
+  components: { AriaLabelledby, ChartLegend, Scrollable, StickyChart },
   props: {
     displayData: {
       type: Object as PropType<DisplayData>,

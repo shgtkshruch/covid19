@@ -189,6 +189,11 @@ export const yAxesBgRightPlugin: Chart.PluginServiceRegistrationOptions[] = [
 
 export interface DataSets<T = number> extends ChartData {
   data: T[]
+  type?: string
+  yAxisID?: string
+  backgroundColor?: string
+  borderColor?: string
+  borderWidth?: number
 }
 
 export interface DataSetsPoint<T = { x: string; y: number }> extends ChartData {

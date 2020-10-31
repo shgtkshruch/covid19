@@ -16,18 +16,7 @@
       :display-data="displayData"
       :display-option="displayOption"
       :legends="legends"
-    >
-      <template v-slot:sticky-chart>
-        <bar
-          class="sticky-legend"
-          :chart-id="`${chartId}-header-right`"
-          :chart-data="displayDataHeader"
-          :options="displayOptionHeader"
-          :plugins="yAxesBgRightPlugin"
-          :height="240"
-        />
-      </template>
-    </scrollable-bar-chart>
+    />
     <template v-slot:additionalDescription>
       <slot name="additionalDescription" />
     </template>
@@ -98,8 +87,6 @@ type Computed = {
   displayInfo: DisplayInfo[]
   displayData: DisplayData
   displayOption: Chart.ChartOptions
-  displayDataHeader: DisplayData
-  displayOptionHeader: Chart.ChartOptions
   scaledTicksYAxisMax: number
   scaledTicksYAxisMaxRight: number
   tableHeaders: TableHeader[]
@@ -481,133 +468,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
       }
       if (this.$route.query.ogp === 'true') {
         Object.assign(options, { animation: { duration: 0 } })
-      }
-      return options
-    },
-    displayDataHeader() {
-      const { datasets } = this.displayData
-      const sums = Array.from(datasets[0].data.keys()).map(
-        (i) => datasets[0].data[i] + datasets[1].data[i]
-      )
-      const max = sums.reduce((a, b) => Math.max(a, b), 0)
-      const n = sums.indexOf(max)
-      return {
-        labels: ['2020-01-01'],
-        datasets: [
-          {
-            data: [this.displayData.datasets[0].data[n]],
-            backgroundColor: 'transparent',
-            yAxisID: 'y-axis-1',
-            borderWidth: 0,
-          },
-          {
-            data: [this.displayData.datasets[1].data[n]],
-            backgroundColor: 'transparent',
-            yAxisID: 'y-axis-1',
-            borderWidth: 0,
-          },
-          {
-            data: [this.displayData.datasets[2].data[n]],
-            backgroundColor: 'transparent',
-            yAxisID: 'y-axis-2',
-            borderWidth: 0,
-          },
-          {
-            data: [this.displayData.datasets[3].data[n]],
-            backgroundColor: 'transparent',
-            yAxisID: 'y-axis-2',
-            borderWidth: 0,
-          },
-        ],
-      }
-    },
-    displayOptionHeader() {
-      const options: Chart.ChartOptions = {
-        maintainAspectRatio: false,
-        legend: {
-          display: false,
-        },
-        tooltips: { enabled: false },
-        scales: {
-          xAxes: [
-            {
-              id: 'day',
-              stacked: true,
-              gridLines: {
-                display: false,
-              },
-              ticks: {
-                fontSize: 9,
-                maxTicksLimit: 20,
-                fontColor: 'transparent',
-                maxRotation: 0,
-                minRotation: 0,
-                callback: (label: string) => {
-                  return dayjs(label).format('D')
-                },
-              },
-            },
-            {
-              id: 'month',
-              stacked: true,
-              gridLines: {
-                drawOnChartArea: false,
-                drawTicks: false, // true -> false
-                drawBorder: false,
-                tickMarkLength: 10,
-              },
-              ticks: {
-                fontSize: 11,
-                fontColor: 'transparent', // #808080
-                padding: 13, // 3 + 10(tickMarkLength)
-                fontStyle: 'bold',
-              },
-              type: 'time',
-              time: {
-                unit: 'month',
-              },
-            },
-          ],
-          yAxes: [
-            {
-              id: 'y-axis-1',
-              type: 'linear',
-              position: 'left',
-              stacked: true,
-              gridLines: {
-                display: true,
-                drawOnChartArea: false,
-                color: '#E5E5E5', // #E5E5E5
-              },
-              ticks: {
-                suggestedMin: 0,
-                maxTicksLimit: 8,
-                fontColor: '#808080', // #808080
-                suggestedMax: this.scaledTicksYAxisMax,
-              },
-            },
-            {
-              id: 'y-axis-2',
-              type: 'linear',
-              position: 'right',
-              gridLines: {
-                display: true,
-                drawOnChartArea: false,
-                color: '#E5E5E5', // #E5E5E5
-              },
-              ticks: {
-                suggestedMin: 0,
-                maxTicksLimit: 8,
-                fontColor: '#808080', // #808080
-                suggestedMax: this.scaledTicksYAxisMaxRight,
-                callback(value) {
-                  return `${value}%`
-                },
-              },
-            },
-          ],
-        },
-        animation: { duration: 0 },
       }
       return options
     },
