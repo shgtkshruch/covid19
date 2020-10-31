@@ -53,7 +53,7 @@ import DataViewTable, {
   TableItem,
 } from '@/components/DataViewTable.vue'
 import OpenDataLink from '@/components/OpenDataLink.vue'
-import { DisplayData, yAxesBgPlugin } from '@/plugins/vue-chart'
+import { DisplayData } from '@/plugins/vue-chart'
 import { getGraphSeriesColor, SurfaceStyle } from '@/utils/colors'
 import { getComplementedDate } from '@/utils/formatDate'
 import { calcDayBeforeRatio } from '@/utils/formatDayBeforeRatio'
@@ -179,7 +179,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     return {
       colors,
       canvas: true,
-      yAxesBgPlugin,
     }
   },
   computed: {

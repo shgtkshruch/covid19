@@ -52,7 +52,7 @@ import DataViewTable, {
   TableItem,
 } from '@/components/DataViewTable.vue'
 import OpenDataLink from '@/components/OpenDataLink.vue'
-import { DisplayData, yAxesBgPlugin } from '@/plugins/vue-chart'
+import { DisplayData } from '@/plugins/vue-chart'
 import { getGraphSeriesColor, SurfaceStyle } from '@/utils/colors'
 import { GraphDataType } from '@/utils/formatGraph'
 import { getNumberToLocaleStringFunction } from '@/utils/monitoringStatusValueFormatters'
@@ -94,7 +94,6 @@ type Props = {
   unit: string
   url: string
   tableLabels: string[] | TranslateResult[]
-  yAxesBgPlugin: Chart.PluginServiceRegistrationOptions[]
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<
@@ -155,10 +154,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     tableLabels: {
       type: Array,
       default: () => [],
-    },
-    yAxesBgPlugin: {
-      type: Array,
-      default: () => yAxesBgPlugin,
     },
   },
   data: () => ({

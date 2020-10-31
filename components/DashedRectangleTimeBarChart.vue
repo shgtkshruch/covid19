@@ -54,12 +54,7 @@ import DataViewTable, {
   TableItem,
 } from '@/components/DataViewTable.vue'
 import OpenDataLink from '@/components/OpenDataLink.vue'
-import {
-  DataSets,
-  DataSetsPoint,
-  DisplayData,
-  yAxesBgPlugin,
-} from '@/plugins/vue-chart'
+import { DataSets, DataSetsPoint, DisplayData } from '@/plugins/vue-chart'
 import { getGraphSeriesStyle } from '@/utils/colors'
 import { getComplementedDate } from '@/utils/formatDate'
 import { calcDayBeforeRatio } from '@/utils/formatDayBeforeRatio'
@@ -106,7 +101,6 @@ type Props = {
   dashedRectangleRange: string
   addedValue: number
   tableLabels: string[] | TranslateResult[]
-  yAxesBgPlugin: Chart.PluginServiceRegistrationOptions[]
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<
@@ -171,10 +165,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     tableLabels: {
       type: Array,
       default: () => [],
-    },
-    yAxesBgPlugin: {
-      type: Array,
-      default: () => yAxesBgPlugin,
     },
   },
   data: () => ({

@@ -59,11 +59,7 @@ import DataViewTable, {
   TableHeader,
   TableItem,
 } from '@/components/DataViewTable.vue'
-import {
-  DisplayData,
-  yAxesBgPlugin,
-  yAxesBgRightPlugin,
-} from '@/plugins/vue-chart'
+import { DisplayData } from '@/plugins/vue-chart'
 import { getGraphSeriesColor, SurfaceStyle } from '@/utils/colors'
 import { getComplementedDate } from '@/utils/formatDate'
 import { calcDayBeforeRatio } from '@/utils/formatDayBeforeRatio'
@@ -106,8 +102,6 @@ type Props = {
   dataLabels: string[] | TranslateResult[]
   tableLabels: string[] | TranslateResult[]
   unit: string[]
-  yAxesBgPlugin: Chart.PluginServiceRegistrationOptions[]
-  yAxesBgRightPlugin: Chart.PluginServiceRegistrationOptions[]
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<
@@ -175,14 +169,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     unit: {
       type: Array,
       default: () => [],
-    },
-    yAxesBgPlugin: {
-      type: Array,
-      default: () => yAxesBgPlugin,
-    },
-    yAxesBgRightPlugin: {
-      type: Array,
-      default: () => yAxesBgRightPlugin,
     },
   },
   data: () => ({

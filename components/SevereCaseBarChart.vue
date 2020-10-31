@@ -46,7 +46,7 @@ import DataViewTable, {
   TableItem,
 } from '@/components/DataViewTable.vue'
 import OpenDataLink from '@/components/OpenDataLink.vue'
-import { DisplayData, yAxesBgPlugin } from '@/plugins/vue-chart'
+import { DisplayData } from '@/plugins/vue-chart'
 import { getGraphSeriesStyle } from '@/utils/colors'
 import { getComplementedDate } from '@/utils/formatDate'
 import { calcDayBeforeRatio } from '@/utils/formatDayBeforeRatio'
@@ -79,7 +79,6 @@ type Props = {
   chartData: GraphDataType[]
   date: string
   unit: string
-  yAxesBgPlugin: Chart.PluginServiceRegistrationOptions[]
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<
@@ -127,10 +126,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     unit: {
       type: String,
       default: '',
-    },
-    yAxesBgPlugin: {
-      type: Array,
-      default: () => yAxesBgPlugin,
     },
   },
   data: () => ({

@@ -5,7 +5,7 @@
     :chart-data="chartData"
     :options="chartOption"
     :display-legends="displayLegends"
-    :plugins="yAxesBgPlugin"
+    :plugins="plugins"
     :height="height"
   />
 </template>
@@ -15,7 +15,11 @@ import { Chart } from 'chart.js'
 import Vue, { PropType } from 'vue'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
-import { DisplayData } from '@/plugins/vue-chart'
+import {
+  DisplayData,
+  yAxesBgPlugin,
+  yAxesBgRightPlugin,
+} from '@/plugins/vue-chart'
 const clone = require('rfdc')()
 
 type Data = {
@@ -24,7 +28,7 @@ type Data = {
 type Methods = {}
 type Computed = {
   chartData: DisplayData
-  yAxesBgPlugin: []
+  plugins: Chart.PluginServiceRegistrationOptions[]
 }
 type Props = {
   displayData: DisplayData
@@ -79,8 +83,9 @@ const options: ThisTypedComponentOptionsWithRecordProps<
         }),
       }
     },
-    yAxesBgPlugin() {
-      return []
+    plugins() {
+      const axesCount = this.displayOption.scales!.yAxes!.length
+      return axesCount === 1 ? yAxesBgPlugin : yAxesBgRightPlugin
     },
   },
   created() {

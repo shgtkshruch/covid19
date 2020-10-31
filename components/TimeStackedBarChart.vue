@@ -53,7 +53,7 @@ import DataViewTable, {
   TableHeader,
   TableItem,
 } from '@/components/DataViewTable.vue'
-import { DisplayData, yAxesBgPlugin } from '@/plugins/vue-chart'
+import { DisplayData } from '@/plugins/vue-chart'
 import { getGraphSeriesStyle, SurfaceStyle } from '@/utils/colors'
 import { getComplementedDate, getDayjsObject } from '@/utils/formatDate'
 
@@ -100,7 +100,6 @@ type Props = {
   dataLabels: string[] | TranslateResult[]
   tableLabels: string[] | TranslateResult[]
   unit: string
-  yAxesBgPlugin: Chart.PluginServiceRegistrationOptions[]
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<
@@ -167,10 +166,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     unit: {
       type: String,
       default: '',
-    },
-    yAxesBgPlugin: {
-      type: Array,
-      default: () => yAxesBgPlugin,
     },
   },
   data: () => ({
