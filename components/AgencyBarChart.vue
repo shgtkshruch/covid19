@@ -1,14 +1,16 @@
 <template>
   <data-view :title="title" :title-id="titleId" :date="date">
-    <aria-labelledby :title="title" :title-id="titleId">
-      <bar
-        :style="{ display: canvas ? 'block' : 'none' }"
-        :chart-id="chartId"
-        :chart-data="displayData"
-        :options="displayOption"
-        :height="240"
-      />
-    </aria-labelledby>
+    <scrollable-bar-chart
+      v-show="canvas"
+      :title="title"
+      :title-id="titleId"
+      :chart-id="chartId"
+      :display-data="displayData"
+      :display-option="displayOption"
+      :legends="legends"
+      :bar-count="25"
+      :height="280"
+    />
     <template v-slot:dataTable>
       <client-only>
         <data-view-table :headers="tableHeaders" :items="tableData" />
@@ -26,7 +28,8 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
-import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
+import { LegendLabel } from '@/components/chart/Legend.vue'
+import ScrollableBarChart from '@/components/chart/ScrollableBarChart.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewTable, {
   TableHeader,
@@ -34,7 +37,7 @@ import DataViewTable, {
 } from '@/components/DataViewTable.vue'
 import AgencyData from '@/data/agency.json'
 import { DataSets, DisplayData } from '@/plugins/vue-chart'
-import { getGraphSeriesStyle } from '@/utils/colors'
+import { getGraphSeriesStyle, SurfaceStyle } from '@/utils/colors'
 
 interface AgencyDataSets extends DataSets {
   label: string
@@ -43,12 +46,10 @@ interface AgencyDisplayData extends DisplayData {
   datasets: AgencyDataSets[]
 }
 
-interface HTMLElementEvent<T extends HTMLElement> extends MouseEvent {
-  currentTarget: T
-}
 type Data = {
   canvas: boolean
   agencies: VueI18n.TranslateResult[]
+  colors: SurfaceStyle[]
 }
 type Methods = {}
 type Computed = {
@@ -56,6 +57,7 @@ type Computed = {
   displayOption: ChartOptions
   tableHeaders: TableHeader[]
   tableData: TableItem[]
+  legends: LegendLabel[]
 }
 type Props = {
   title: string
@@ -76,7 +78,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   created() {
     this.canvas = process.browser
   },
-  components: { DataView, DataViewTable, AriaLabelledby },
+  components: { DataView, DataViewTable, ScrollableBarChart },
   props: {
     title: {
       type: String,
@@ -114,19 +116,29 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     return {
       canvas: true,
       agencies,
+      colors: getGraphSeriesStyle(3),
     }
   },
   computed: {
+    legends() {
+      const dataLabels = this.agencies as string[]
+      return dataLabels.map((label, i) => {
+        const style = {
+          backgroundColor: this.colors[i].fillColor,
+          borderColor: this.colors[i].strokeColor,
+        }
+        return { label, style }
+      })
+    },
     displayData() {
-      const graphSeries = getGraphSeriesStyle(this.chartData.datasets.length)
       return {
         labels: this.chartData.labels as string[],
         datasets: this.chartData.datasets.map((item, index) => {
           return {
             label: this.agencies[index] as string,
             data: item.data,
-            backgroundColor: graphSeries[index].fillColor,
-            borderColor: graphSeries[index].strokeColor,
+            backgroundColor: this.colors[index].fillColor,
+            borderColor: this.colors[index].strokeColor,
             borderWidth: 1,
           }
         }),
@@ -154,17 +166,9 @@ const options: ThisTypedComponentOptionsWithRecordProps<
           },
         },
         legend: {
-          display: true,
-          onHover: (e: HTMLElementEvent<HTMLInputElement>) => {
-            e.currentTarget!.style!.cursor = 'pointer'
-          },
-          onLeave: (e: HTMLElementEvent<HTMLInputElement>) => {
-            e.currentTarget!.style!.cursor = 'default'
-          },
-          labels: {
-            boxWidth: 20,
-          },
+          display: false,
         },
+        maintainAspectRatio: false,
         scales: {
           xAxes: [
             {

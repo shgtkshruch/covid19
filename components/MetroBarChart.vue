@@ -1,14 +1,15 @@
 <template>
   <data-view :title="title" :title-id="titleId" :date="date">
-    <aria-labelledby :title="title" :title-id="titleId">
-      <bar
-        :style="{ display: canvas ? 'block' : 'none' }"
-        :chart-id="chartId"
-        :chart-data="displayData"
-        :options="displayOption"
-        :height="240"
-      />
-    </aria-labelledby>
+    <scrollable-bar-chart
+      v-show="canvas"
+      :title="title"
+      :title-id="titleId"
+      :chart-id="chartId"
+      :display-data="displayData"
+      :display-option="displayOption"
+      :legends="legends"
+      :height="280"
+    />
     <template v-slot:dataTable>
       <client-only>
         <data-view-table :headers="tableHeaders" :items="tableData" />
@@ -46,21 +47,19 @@ import Vue from 'vue'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
 import AppLink from '@/components/AppLink.vue'
-import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
+import { LegendLabel } from '@/components/chart/Legend.vue'
+import ScrollableBarChart from '@/components/chart/ScrollableBarChart.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewTable, {
   TableHeader,
   TableItem,
 } from '@/components/DataViewTable.vue'
 import { DisplayData } from '@/plugins/vue-chart'
-import { getGraphSeriesStyle } from '@/utils/colors'
-
-interface HTMLElementEvent<T extends HTMLElement> extends MouseEvent {
-  currentTarget: T
-}
+import { getGraphSeriesStyle, SurfaceStyle } from '@/utils/colors'
 
 type Data = {
   canvas: boolean
+  colors: SurfaceStyle[]
 }
 type Methods = {}
 type Computed = {
@@ -68,6 +67,7 @@ type Computed = {
   tableHeaders: TableHeader[]
   tableData: TableItem[]
   displayOption: Chart.ChartOptions
+  legends: LegendLabel[]
 }
 type Props = {
   chartData: ChartData
@@ -91,7 +91,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   created() {
     this.canvas = process.browser
   },
-  components: { DataView, DataViewTable, AppLink, AriaLabelledby },
+  components: { DataView, DataViewTable, AppLink, ScrollableBarChart },
   props: {
     title: {
       type: String,
@@ -128,16 +128,26 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   },
   data: () => ({
     canvas: true,
+    colors: getGraphSeriesStyle(3),
   }),
   computed: {
+    legends() {
+      const dataLabels = this.chartData.labels! as string[]
+      return dataLabels.map((label, i) => {
+        const style = {
+          backgroundColor: this.colors[i].fillColor,
+          borderColor: this.colors[i].strokeColor,
+        }
+        return { label, style }
+      })
+    },
     displayData() {
-      const graphSeries = getGraphSeriesStyle(this.chartData.labels!.length)
       const datasets = this.chartData.labels!.map((label, i) => {
         return {
           label: label as string,
           data: this.chartData.datasets!.map((d) => d.data![i]) as number[],
-          backgroundColor: graphSeries[i].fillColor,
-          borderColor: graphSeries[i].strokeColor,
+          backgroundColor: this.colors[i].fillColor,
+          borderColor: this.colors[i].strokeColor,
           borderWidth: 1,
         }
       })
@@ -172,17 +182,9 @@ const options: ThisTypedComponentOptionsWithRecordProps<
       const self = this
       const options: ChartOptions = {
         legend: {
-          display: true,
-          onHover: (e: HTMLElementEvent<HTMLInputElement>) => {
-            e.currentTarget.style.cursor = 'pointer'
-          },
-          onLeave: (e: HTMLElementEvent<HTMLInputElement>) => {
-            e.currentTarget.style.cursor = 'default'
-          },
-          labels: {
-            boxWidth: 20,
-          },
+          display: false,
         },
+        maintainAspectRatio: false,
         scales: {
           xAxes: [
             {
@@ -195,6 +197,8 @@ const options: ThisTypedComponentOptionsWithRecordProps<
                 fontSize: 10,
                 maxTicksLimit: 20,
                 fontColor: '#808080',
+                maxRotation: 40,
+                minRotation: 40,
               },
             },
           ],

@@ -29,9 +29,12 @@ type Methods = {
 }
 type Computed = {
   labelCount: number
+  isStacked: boolean
 }
 type Props = {
   displayData: DisplayData
+  displayOption: Chart.ChartOptions
+  barCount: number
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<
@@ -45,6 +48,15 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     displayData: {
       type: Object as PropType<DisplayData>,
       required: true,
+    },
+    displayOption: {
+      type: Object as PropType<Chart.ChartOptions>,
+      required: true,
+    },
+    barCount: {
+      type: Number,
+      default: 60,
+      required: false,
     },
   },
   data() {
@@ -61,7 +73,16 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   },
   computed: {
     labelCount() {
-      return this.displayData.labels?.length || 0
+      if (this.isStacked) {
+        return this.displayData.labels?.length || 0
+      }
+
+      return this.displayData.datasets.reduce((sum, dataset) => {
+        return (sum += dataset.data.length)
+      }, 0)
+    },
+    isStacked() {
+      return this.displayOption.scales!.xAxes!.some((xAxe) => xAxe.stacked)
     },
   },
   methods: {
@@ -73,10 +94,9 @@ const options: ThisTypedComponentOptionsWithRecordProps<
       this.scrollRightSide()
     },
     calcChartWidth(containerWidth, labelCount) {
-      const dates = 60
       const yaxisWidth = 38
       const chartWidth = containerWidth - yaxisWidth
-      const barWidth = chartWidth / dates
+      const barWidth = chartWidth / this.barCount
       const calcWidth = barWidth * labelCount + yaxisWidth
       return Math.max(calcWidth, containerWidth)
     },

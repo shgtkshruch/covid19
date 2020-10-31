@@ -6,7 +6,11 @@
       :display-legends="displayLegends"
       @click="onClickLegend"
     />
-    <scrollable :display-data="displayData">
+    <scrollable
+      :display-data="displayData"
+      :display-option="displayOption"
+      :bar-count="barCount"
+    >
       <template v-slot:chart="{ chartWidth }">
         <aria-labelledby :title="title" :title-id="titleId">
           <bar
@@ -56,6 +60,7 @@ type Props = {
   titleId: string
   chartId: string
   height: number
+  barCount: number
 }
 
 const options: ThisTypedComponentOptionsWithRecordProps<
@@ -95,6 +100,10 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     height: {
       type: Number,
       default: 240,
+    },
+    barCount: {
+      type: Number,
+      required: false,
     },
   },
   data() {
