@@ -5,18 +5,14 @@
     :date="date"
     :head-title="title + infoTitles.join(',')"
   >
-    <scrollable-chart v-show="canvas" :display-data="displayData">
-      <template v-slot:chart="{ chartWidth }">
-        <aria-labelledby :title="title" :title-id="titleId">
-          <bar
-            :chart-id="chartId"
-            :chart-data="displayData"
-            :options="displayOption"
-            :height="240"
-            :width="chartWidth"
-          />
-        </aria-labelledby>
-      </template>
+    <scrollable-bar-chart
+      v-show="canvas"
+      :title="title"
+      :title-id="titleId"
+      :chart-id="chartId"
+      :display-data="displayData"
+      :display-option="displayOption"
+    >
       <template v-slot:sticky-chart>
         <bar
           class="sticky-legend"
@@ -27,7 +23,7 @@
           :height="240"
         />
       </template>
-    </scrollable-chart>
+    </scrollable-bar-chart>
     <template v-slot:additionalDescription>
       <slot name="additionalDescription" />
     </template>
@@ -53,7 +49,7 @@ import dayjs from 'dayjs'
 import Vue from 'vue'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
-import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
+import ScrollableBarChart from '@/components/chart/ScrollableBarChart.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewDataSetPanel from '@/components/DataViewDataSetPanel.vue'
 import DataViewTable, {
@@ -61,7 +57,6 @@ import DataViewTable, {
   TableItem,
 } from '@/components/DataViewTable.vue'
 import OpenDataLink from '@/components/OpenDataLink.vue'
-import ScrollableChart from '@/components/ScrollableChart.vue'
 import { DisplayData, yAxesBgPlugin } from '@/plugins/vue-chart'
 import { getGraphSeriesStyle } from '@/utils/colors'
 import { getComplementedDate } from '@/utils/formatDate'
@@ -114,9 +109,8 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     DataView,
     DataViewTable,
     DataViewDataSetPanel,
-    ScrollableChart,
+    ScrollableBarChart,
     OpenDataLink,
-    AriaLabelledby,
   },
   props: {
     title: {

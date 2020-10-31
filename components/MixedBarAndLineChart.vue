@@ -5,29 +5,15 @@
     :date="date"
     :head-title="title + infoTitles.join(',')"
   >
-    <chart-legend
+    <scrollable-bar-chart
       v-show="canvas"
-      :legends="legends"
-      :display-legends="displayLegends"
-      @click="onClickLegend"
-    />
-    <scrollable-chart
-      v-show="canvas"
+      :title="title"
+      :title-id="titleId"
+      :chart-id="chartId"
       :display-data="displayData"
       :display-option="displayOption"
+      :legends="legends"
     >
-      <template v-slot:chart="{ chartWidth }">
-        <aria-labelledby :title="title" :title-id="titleId">
-          <bar
-            :chart-id="chartId"
-            :chart-data="displayData"
-            :options="displayOption"
-            :display-legends="displayLegends"
-            :height="240"
-            :width="chartWidth"
-          />
-        </aria-labelledby>
-      </template>
       <template v-slot:sticky-chart>
         <bar
           class="sticky-legend"
@@ -35,11 +21,10 @@
           :chart-data="displayDataHeader"
           :options="displayOptionHeader"
           :plugins="yAxesBgPlugin"
-          :display-legends="displayLegends"
           :height="240"
         />
       </template>
-    </scrollable-chart>
+    </scrollable-bar-chart>
     <template v-slot:dataTable>
       <client-only>
         <data-view-table :headers="tableHeaders" :items="tableData" />
@@ -70,8 +55,8 @@ import Vue from 'vue'
 import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
-import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
-import ChartLegend, { LegendLabel } from '@/components/chart/Legend.vue'
+import { LegendLabel } from '@/components/chart/Legend.vue'
+import ScrollableBarChart from '@/components/chart/ScrollableBarChart.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewDataSetPanel from '@/components/DataViewDataSetPanel.vue'
 import DataViewTable, {
@@ -79,7 +64,6 @@ import DataViewTable, {
   TableItem,
 } from '@/components/DataViewTable.vue'
 import OpenDataLink from '@/components/OpenDataLink.vue'
-import ScrollableChart from '@/components/ScrollableChart.vue'
 import { DisplayData, yAxesBgPlugin } from '@/plugins/vue-chart'
 import { getGraphSeriesColor, SurfaceStyle } from '@/utils/colors'
 import { getComplementedDate } from '@/utils/formatDate'
@@ -88,12 +72,10 @@ import { getNumberToFixedFunction } from '@/utils/monitoringStatusValueFormatter
 
 type Data = {
   canvas: boolean
-  displayLegends: boolean[]
   colors: SurfaceStyle[]
 }
 type Methods = {
   makeLineData: (value: number) => number[]
-  onClickLegend: (i: number) => void
 }
 
 type Computed = {
@@ -143,10 +125,8 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     DataView,
     DataViewTable,
     DataViewDataSetPanel,
-    ScrollableChart,
+    ScrollableBarChart,
     OpenDataLink,
-    AriaLabelledby,
-    ChartLegend,
   },
   props: {
     title: {
@@ -205,7 +185,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
       getGraphSeriesColor('A'),
     ]
     return {
-      displayLegends: [true, true],
       colors,
       canvas: true,
       yAxesBgPlugin,
@@ -486,10 +465,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     },
   },
   methods: {
-    onClickLegend(i) {
-      this.displayLegends[i] = !this.displayLegends[i]
-      this.displayLegends = this.displayLegends.slice()
-    },
     makeLineData(value: number): number[] {
       return this.chartData[0].map((_) => value)
     },

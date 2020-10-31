@@ -8,22 +8,14 @@
     <template v-slot:description>
       <slot name="description" />
     </template>
-    <scrollable-chart
+    <scrollable-bar-chart
       v-show="canvas"
+      :title="title"
+      :title-id="titleId"
+      :chart-id="chartId"
       :display-data="displayData"
       :display-option="displayOption"
     >
-      <template v-slot:chart="{ chartWidth }">
-        <aria-labelledby :title="title" :title-id="titleId">
-          <bar
-            :chart-id="chartId"
-            :chart-data="displayData"
-            :options="displayOption"
-            :height="240"
-            :width="chartWidth"
-          />
-        </aria-labelledby>
-      </template>
       <template v-slot:sticky-chart>
         <bar
           class="sticky-legend"
@@ -34,7 +26,7 @@
           :height="240"
         />
       </template>
-    </scrollable-chart>
+    </scrollable-bar-chart>
     <template v-slot:additionalDescription>
       <slot name="additionalDescription" />
     </template>
@@ -65,6 +57,7 @@ import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
 import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
+import ScrollableBarChart from '@/components/chart/ScrollableBarChart.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewDataSetPanel from '@/components/DataViewDataSetPanel.vue'
 import DataViewTable, {
@@ -72,7 +65,6 @@ import DataViewTable, {
   TableItem,
 } from '@/components/DataViewTable.vue'
 import OpenDataLink from '@/components/OpenDataLink.vue'
-import ScrollableChart from '@/components/ScrollableChart.vue'
 import {
   DataSets,
   DataSetsPoint,
@@ -143,7 +135,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     DataView,
     DataViewTable,
     DataViewDataSetPanel,
-    ScrollableChart,
+    ScrollableBarChart,
     OpenDataLink,
     AriaLabelledby,
   },

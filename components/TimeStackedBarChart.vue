@@ -10,29 +10,15 @@
         :style="{ display: canvas ? 'inline-block' : 'none' }"
       />
     </template>
-    <chart-legend
+    <scrollable-bar-chart
       v-show="canvas"
-      :legends="legends"
-      :display-legends="displayLegends"
-      @click="onClickLegend"
-    />
-    <scrollable-chart
-      v-show="canvas"
+      :title="title"
+      :title-id="titleId"
+      :chart-id="chartId"
       :display-data="displayData"
       :display-option="displayOption"
+      :legends="legends"
     >
-      <template v-slot:chart="{ chartWidth }">
-        <aria-labelledby :title="title" :title-id="titleId">
-          <bar
-            :chart-id="chartId"
-            :chart-data="displayData"
-            :options="displayOption"
-            :display-legends="displayLegends"
-            :height="240"
-            :width="chartWidth"
-          />
-        </aria-labelledby>
-      </template>
       <template v-slot:sticky-chart>
         <bar
           class="sticky-legend"
@@ -40,11 +26,10 @@
           :chart-data="displayDataHeader"
           :options="displayOptionHeader"
           :plugins="yAxesBgPlugin"
-          :display-legends="displayLegends"
           :height="240"
         />
       </template>
-    </scrollable-chart>
+    </scrollable-bar-chart>
     <template v-slot:dataTable>
       <client-only>
         <data-view-table :headers="tableHeaders" :items="tableData" />
@@ -70,8 +55,8 @@ import Vue from 'vue'
 import { TranslateResult } from 'vue-i18n'
 import { ThisTypedComponentOptionsWithRecordProps } from 'vue/types/options'
 
-import AriaLabelledby from '@/components/chart/AriaLabelledby.vue'
-import ChartLegend, { LegendLabel } from '@/components/chart/Legend.vue'
+import { LegendLabel } from '@/components/chart/Legend.vue'
+import ScrollableBarChart from '@/components/chart/ScrollableBarChart.vue'
 import DataSelector from '@/components/DataSelector.vue'
 import DataView from '@/components/DataView.vue'
 import DataViewBasicInfoPanel from '@/components/DataViewBasicInfoPanel.vue'
@@ -79,7 +64,6 @@ import DataViewTable, {
   TableHeader,
   TableItem,
 } from '@/components/DataViewTable.vue'
-import ScrollableChart from '@/components/ScrollableChart.vue'
 import { DisplayData, yAxesBgPlugin } from '@/plugins/vue-chart'
 import { getGraphSeriesStyle, SurfaceStyle } from '@/utils/colors'
 import { getComplementedDate, getDayjsObject } from '@/utils/formatDate'
@@ -90,7 +74,6 @@ interface HTMLElementEvent<T extends HTMLElement> extends MouseEvent {
 type Data = {
   dataKind: 'transition' | 'cumulative'
   canvas: boolean
-  displayLegends: boolean[]
   colors: SurfaceStyle[]
   isSmall: boolean
 }
@@ -100,7 +83,6 @@ type Methods = {
   pickLastNumber: (chartDataArray: number[][]) => number[]
   cumulativeSum: (chartDataArray: number[][]) => number[]
   eachArraySum: (chartDataArray: number[][]) => number[]
-  onClickLegend: (i: number) => void
   handleResize: () => void
 }
 
@@ -153,9 +135,7 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     DataSelector,
     DataViewTable,
     DataViewBasicInfoPanel,
-    ScrollableChart,
-    AriaLabelledby,
-    ChartLegend,
+    ScrollableBarChart,
   },
   props: {
     title: {
@@ -208,7 +188,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
   },
   data: () => ({
     dataKind: 'transition',
-    displayLegends: [true, true],
     colors: getGraphSeriesStyle(2),
     canvas: true,
     isSmall: false,
@@ -547,10 +526,6 @@ const options: ThisTypedComponentOptionsWithRecordProps<
     },
   },
   methods: {
-    onClickLegend(i) {
-      this.displayLegends[i] = !this.displayLegends[i]
-      this.displayLegends = this.displayLegends.slice()
-    },
     cumulative(array: number[]): number[] {
       const cumulativeArray: number[] = []
       let patSum = 0
