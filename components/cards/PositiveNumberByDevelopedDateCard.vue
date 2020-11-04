@@ -1,42 +1,40 @@
 <template>
   <v-col cols="12" md="6" class="DataCard">
-    <client-only>
-      <time-bar-chart
-        :title="$t('発症日別による陽性者数の推移')"
-        :title-id="'positive-number-by-developed-date'"
-        :chart-id="'positive-number-by-developed-date'"
-        :chart-data="graphData"
-        :date="positiveByDeveloped.date"
-        :unit="$t('人')"
-      >
-        <template v-slot:additionalDescription>
-          <span>{{ $t('（注）') }}</span>
-          <ul>
-            <li>
-              {{
-                $t(
-                  '各保健所から報告があった患者の発生情報を、発症日別に整理したものである'
-                )
-              }}
-            </li>
-            <li>
-              {{
-                $t(
-                  '発症日不明者（検査結果が陽性であっても症状がない、発症日を覚えていないなど）はグラフから除いている'
-                )
-              }}
-            </li>
-          </ul>
-        </template>
-        <template v-slot:additionalInfoPanel>
-          <data-view-custom-info-panel
-            :l-text="lText"
-            :s-text="sText"
-            :num="num"
-          />
-        </template>
-      </time-bar-chart>
-    </client-only>
+    <time-bar-chart
+      :title="$t('発症日別による陽性者数の推移')"
+      :title-id="'positive-number-by-developed-date'"
+      :chart-id="'positive-number-by-developed-date'"
+      :chart-data="graphData"
+      :date="positiveByDeveloped.date"
+      :unit="$t('人')"
+    >
+      <template v-slot:additionalDescription>
+        <span>{{ $t('（注）') }}</span>
+        <ul>
+          <li>
+            {{
+              $t(
+                '各保健所から報告があった患者の発生情報を、発症日別に整理したものである'
+              )
+            }}
+          </li>
+          <li>
+            {{
+              $t(
+                '発症日不明者（検査結果が陽性であっても症状がない、発症日を覚えていないなど）はグラフから除いている'
+              )
+            }}
+          </li>
+        </ul>
+      </template>
+      <template v-slot:additionalInfoPanel>
+        <data-view-custom-info-panel
+          :l-text="lText"
+          :s-text="sText"
+          :num="num"
+        />
+      </template>
+    </time-bar-chart>
   </v-col>
 </template>
 

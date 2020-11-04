@@ -1,23 +1,21 @@
 <template>
   <v-col cols="12" md="6" class="DataCard">
-    <client-only>
-      <data-table
-        :title="$t('陽性者の属性')"
-        :title-id="'attributes-of-confirmed-cases'"
-        :chart-data="patientsTable"
-        :chart-option="{}"
-        :date="date"
-        :info="sumInfoOfPatients"
-        :url="'https://catalog.data.metro.tokyo.lg.jp/dataset/t000010d0000000068'"
-        :source="$t('オープンデータを入手')"
-        :loaded="loaded"
-        :error="error"
-        :errormsg="errormsg"
-        :data-length="dataLength"
-        @onChangeItemsPerPage="onChangeItemsPerPage"
-        @onChangePage="onChangePage"
-      />
-    </client-only>
+    <data-table
+      :title="$t('陽性者の属性')"
+      :title-id="'attributes-of-confirmed-cases'"
+      :chart-data="patientsTable"
+      :chart-option="{}"
+      :date="date"
+      :info="sumInfoOfPatients"
+      :url="'https://catalog.data.metro.tokyo.lg.jp/dataset/t000010d0000000068'"
+      :source="$t('オープンデータを入手')"
+      :loaded="loaded"
+      :error="error"
+      :errormsg="errormsg"
+      :data-length="dataLength"
+      @onChangeItemsPerPage="onChangeItemsPerPage"
+      @onChangePage="onChangePage"
+    />
   </v-col>
 </template>
 

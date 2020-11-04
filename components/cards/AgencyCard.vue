@@ -1,19 +1,17 @@
 <template>
   <v-col cols="12" md="6" class="DataCard">
-    <client-only>
-      <agency-bar-chart
-        :title="$t('都庁来庁者数の推移')"
-        :title-id="'agency'"
-        :chart-id="'agency'"
-        :chart-data="agencyData"
-        :date="agencyData.date"
-        :unit="$t('人')"
-      >
-        <template v-slot:additionalDescription>
-          {{ $t('※土・日・祝日を除く庁舎開庁日の1週間累計数') }}
-        </template>
-      </agency-bar-chart>
-    </client-only>
+    <agency-bar-chart
+      :title="$t('都庁来庁者数の推移')"
+      :title-id="'agency'"
+      :chart-id="'agency'"
+      :chart-data="agencyData"
+      :date="agencyData.date"
+      :unit="$t('人')"
+    >
+      <template v-slot:additionalDescription>
+        {{ $t('※土・日・祝日を除く庁舎開庁日の1週間累計数') }}
+      </template>
+    </agency-bar-chart>
   </v-col>
 </template>
 

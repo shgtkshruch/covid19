@@ -1,26 +1,24 @@
 <template>
   <v-col cols="12" md="6" class="DataCard">
-    <client-only>
-      <confirmed-cases-by-municipalities-table
-        :title="$t('陽性者数（区市町村別）')"
-        :title-id="'number-of-confirmed-cases-by-municipalities'"
-        :chart-data="municipalitiesTable"
-        :date="date"
-        :info="info"
-      >
-        <template v-slot:additionalDescription>
-          <span>{{ $t('（注）') }}</span>
-          <ul>
-            <li>
-              {{ $t('前日までに報告された陽性者数の累計値') }}
-            </li>
-            <li>
-              {{ $t('チャーター機帰国者、クルーズ船乗客等は含まれていない') }}
-            </li>
-          </ul>
-        </template>
-      </confirmed-cases-by-municipalities-table>
-    </client-only>
+    <confirmed-cases-by-municipalities-table
+      :title="$t('陽性者数（区市町村別）')"
+      :title-id="'number-of-confirmed-cases-by-municipalities'"
+      :chart-data="municipalitiesTable"
+      :date="date"
+      :info="info"
+    >
+      <template v-slot:additionalDescription>
+        <span>{{ $t('（注）') }}</span>
+        <ul>
+          <li>
+            {{ $t('前日までに報告された陽性者数の累計値') }}
+          </li>
+          <li>
+            {{ $t('チャーター機帰国者、クルーズ船乗客等は含まれていない') }}
+          </li>
+        </ul>
+      </template>
+    </confirmed-cases-by-municipalities-table>
   </v-col>
 </template>
 
