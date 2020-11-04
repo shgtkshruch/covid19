@@ -122,6 +122,10 @@ export default Vue.extend({
     // カードの個別ページの場合は、タイトルと更新時刻を`page/cards/_card`に渡す
     if (!this.$route.params.card) return {}
 
+    // リアクティブな値は直接metaのテンプレートに渡せないので、意図的に変数に割り当てています。
+    // https://vue-meta.nuxtjs.org/guide/caveats.html#reactive-variables-in-template-functions
+    const date = this.formattedDateForDisplay
+
     return {
       title: this.headTitle ? this.headTitle : this.title,
       meta: [
@@ -133,12 +137,12 @@ export default Vue.extend({
         {
           hid: 'description',
           name: 'description',
-          content: this.formattedDateForDisplay,
+          content: date,
         },
         {
           hid: 'og:description',
           property: 'og:description',
-          content: this.formattedDateForDisplay,
+          content: date,
         },
       ],
     }
